@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=testdb
+      - MYSQL_ROOT_PASSWORD=mypass
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+  tbls:
+    build:
+      context: ./docker/tbls
+    volumes:
+      - ./dust:/work
+    command: doc --force mysql://root:mypass@mysql:3306/testdb
+    depends_on:
+      - mysql
